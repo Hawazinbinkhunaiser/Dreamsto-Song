@@ -196,8 +196,8 @@ def main():
     st.markdown("<p style='text-align: center; font-size: 1.2em; color: #666;'>Transform collective dreams about Singapore's river into beautiful songs</p>", unsafe_allow_html=True)
     
     # API Keys (Replace with your actual API keys)
-    CLAUDE_API_KEY = "your-claude-api-key-here"  # Replace with your actual Claude API key
-    SUNO_API_KEY = "your-suno-api-key-here"      # Replace with your actual Suno API key
+    CLAUDE_API_KEY = "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"  # Replace with your actual Claude API key
+    SUNO_API_KEY = "f991f229712ece64cdc0b9bcaa58ccaf"      # Replace with your actual Suno API key
     
     # Sidebar for configuration
     st.sidebar.header("⚙️ Configuration")
@@ -377,12 +377,12 @@ def main():
                 else:
                     st.warning("No dreams found in the selected column.")
         
-        elif CLAUDE_API_KEY == "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" or SUNO_API_KEY == "f991f229712ece64cdc0b9bcaa58ccaf":
+        elif CLAUDE_API_KEY == "your-claude-api-key-here" or SUNO_API_KEY == "your-suno-api-key-here":
             st.warning("⚠️ Please configure your API keys in the code before using the app.")
             st.code("""
 # Update these lines in the code with your actual API keys:
-CLAUDE_API_KEY = "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"
-SUNO_API_KEY = "f991f229712ece64cdc0b9bcaa58ccaf"
+CLAUDE_API_KEY = "your-actual-claude-api-key"
+SUNO_API_KEY = "your-actual-suno-api-key"
             """)
         
         else:

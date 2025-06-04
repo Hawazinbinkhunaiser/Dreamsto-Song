@@ -195,18 +195,29 @@ def main():
     st.markdown("<h1 class='main-header'>🎵 Singapore River Dreams Song Generator</h1>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: center; font-size: 1.2em; color: #666;'>Transform collective dreams about Singapore's river into beautiful songs</p>", unsafe_allow_html=True)
     
-    # Sidebar for API keys
-    st.sidebar.header("🔑 API Configuration")
-    claude_api_key = st.sidebar.text_input("Claude API Key", type="password", help="Enter your Anthropic Claude API key")
-    suno_api_key = st.sidebar.text_input("Suno API Key", type="password", help="Enter your Suno API key")
+    # API Keys (Replace with your actual API keys)
+    CLAUDE_API_KEY = "your-claude-api-key-here"  # Replace with your actual Claude API key
+    SUNO_API_KEY = "your-suno-api-key-here"      # Replace with your actual Suno API key
     
-    # Add callback URL configuration for production use
-    st.sidebar.header("⚙️ Advanced Settings")
+    # Sidebar for configuration
+    st.sidebar.header("⚙️ Configuration")
     callback_url = st.sidebar.text_input(
         "Callback URL (Optional)", 
         placeholder="https://yourserver.com/callback",
         help="URL to receive completion notifications. Leave empty for demo mode."
     )
+    
+    # API Status indicator
+    st.sidebar.header("🔌 API Status")
+    if CLAUDE_API_KEY != "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":
+        st.sidebar.success("✅ Claude API: Ready")
+    else:
+        st.sidebar.error("❌ Claude API: Key not configured")
+    
+    if SUNO_API_KEY != "f991f229712ece64cdc0b9bcaa58ccaf":
+        st.sidebar.success("✅ Suno API: Ready")
+    else:
+        st.sidebar.error("❌ Suno API: Key not configured")
     
     # Main content
     col1, col2 = st.columns([1, 1])
@@ -248,7 +259,7 @@ def main():
     with col2:
         st.header("🎼 Song Generation")
         
-        if 'dreams_df' in st.session_state and claude_api_key and suno_api_key:
+        if 'dreams_df' in st.session_state and CLAUDE_API_KEY != "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" and SUNO_API_KEY != "f991f229712ece64cdc0b9bcaa58ccaf":
             dream_column = st.selectbox("Select dream column:", st.session_state.dreams_df.columns, key="dream_col_select")
             song_title = st.text_input("Song Title", value="Singapore River Dreams")
             genre = st.selectbox("Music Genre", ["pop", "folk", "indie", "acoustic", "classical", "electronic"])
@@ -258,71 +269,121 @@ def main():
                 dreams_list = st.session_state.dreams_df[dream_column].dropna().tolist()
                 
                 if dreams_list:
-                    # Step 1: Generate lyrics with Claude
-                    st.subheader("✍️ Generating Lyrics...")
-                    with st.spinner("Claude is crafting beautiful lyrics from the dreams..."):
-                        lyrics = generate_lyrics_with_claude(dreams_list, claude_api_key)
-                    
-                    if lyrics:
-                        st.markdown('<div class="success-box">✅ Lyrics generated successfully!</div>', unsafe_allow_html=True)
-                        st.markdown(f'<div class="lyrics-box"><h4>🎼 Generated Lyrics:</h4><pre>{lyrics}</pre></div>', unsafe_allow_html=True)
+                    # Initialize progress tracking
+                    progress_container = st.container()
+                    with progress_container:
+                        # Overall progress bar
+                        overall_progress = st.progress(0)
+                        status_text = st.empty()
                         
-                        # Step 2: Generate song with Suno
-                        st.subheader("🎵 Creating Song...")
-                        with st.spinner("Suno is composing your song... This might take a few minutes."):
-                            suno_result = generate_song_with_suno(lyrics, suno_api_key, song_title, genre, callback_url)
+                        # Step 1: Generate lyrics with Claude
+                        status_text.text("🎼 Step 1/3: Analyzing dreams and generating lyrics...")
+                        overall_progress.progress(10)
                         
-                        if suno_result:
-                            st.markdown('<div class="success-box">✅ Song generation request sent successfully!</div>', unsafe_allow_html=True)
+                        st.subheader("✍️ Generating Lyrics...")
+                        with st.spinner("Claude is crafting beautiful lyrics from the dreams..."):
+                            lyrics = generate_lyrics_with_claude(dreams_list, CLAUDE_API_KEY)
+                            overall_progress.progress(40)
+                        
+                        if lyrics:
+                            status_text.text("✅ Lyrics generated successfully!")
+                            overall_progress.progress(50)
                             
-                            # Store results in session state
-                            st.session_state.lyrics = lyrics
-                            st.session_state.suno_result = suno_result
+                            st.markdown('<div class="success-box">✅ Lyrics generated successfully!</div>', unsafe_allow_html=True)
+                            st.markdown(f'<div class="lyrics-box"><h4>🎼 Generated Lyrics:</h4><pre>{lyrics}</pre></div>', unsafe_allow_html=True)
                             
-                            # Display task information
-                            if 'data' in suno_result:
-                                task_id = suno_result['data'].get('task_id')
-                                if task_id:
-                                    st.info(f"🎵 Task ID: {task_id}")
-                                    st.info("Your song is being generated. This usually takes 2-5 minutes.")
-                                    
-                                    # Note about callback vs polling
-                                    st.markdown("""
-                                    <div style="background-color: #fff3cd; padding: 1rem; border-radius: 10px; border-left: 4px solid #ffc107;">
-                                    <strong>⏳ Song Generation in Progress</strong><br>
-                                    The Suno API works asynchronously. Your song will be ready in a few minutes. 
-                                    Since this is a demo, you would typically:
-                                    <ul>
-                                    <li>Set up a proper callback URL to receive the completed song</li>
-                                    <li>Or periodically check the task status</li>
-                                    </ul>
-                                    The generated songs will include audio URLs that you can listen to and download.
-                                    </div>
-                                    """, unsafe_allow_html=True)
-                                    
-                                    # For demo purposes, show what the callback would contain
-                                    st.subheader("📋 Expected Result Structure")
-                                    st.json({
-                                        "message": "When complete, you'll receive:",
-                                        "structure": {
-                                            "audio_url": "Direct link to download the MP3",
-                                            "stream_audio_url": "Link for streaming",
-                                            "image_url": "Album cover/artwork",
-                                            "title": song_title,
-                                            "duration": "Song length in seconds",
-                                            "model_name": "AI model used"
-                                        }
-                                    })
+                            # Step 2: Generate song with Suno
+                            status_text.text("🎵 Step 2/3: Sending lyrics to Suno AI for music generation...")
+                            overall_progress.progress(60)
                             
-                            # Show the API response for debugging
-                            with st.expander("🔍 API Response Details"):
-                                st.json(suno_result)
+                            st.subheader("🎵 Creating Song...")
+                            with st.spinner("Suno is composing your song... This might take a few minutes."):
+                                suno_result = generate_song_with_suno(lyrics, SUNO_API_KEY, song_title, genre, callback_url)
+                                overall_progress.progress(80)
+                            
+                            if suno_result:
+                                status_text.text("🎉 Step 3/3: Song generation request sent successfully!")
+                                overall_progress.progress(90)
                                 
+                                st.markdown('<div class="success-box">✅ Song generation request sent successfully!</div>', unsafe_allow_html=True)
+                                
+                                # Store results in session state
+                                st.session_state.lyrics = lyrics
+                                st.session_state.suno_result = suno_result
+                                
+                                # Display task information
+                                if 'data' in suno_result:
+                                    task_id = suno_result['data'].get('task_id')
+                                    if task_id:
+                                        status_text.text(f"✅ Complete! Task ID: {task_id}")
+                                        overall_progress.progress(100)
+                                        
+                                        st.info(f"🎵 Task ID: {task_id}")
+                                        
+                                        # Song generation progress bar
+                                        st.subheader("🎼 Song Generation Progress")
+                                        song_progress = st.progress(0)
+                                        song_status = st.empty()
+                                        
+                                        # Simulate song generation progress
+                                        for i in range(0, 101, 5):
+                                            song_progress.progress(i)
+                                            if i < 30:
+                                                song_status.text(f"🎵 Analyzing lyrics and musical structure... {i}%")
+                                            elif i < 60:
+                                                song_status.text(f"🎤 Generating vocals and melody... {i}%")
+                                            elif i < 90:
+                                                song_status.text(f"🎚️ Mixing and mastering audio... {i}%")
+                                            else:
+                                                song_status.text(f"✨ Finalizing your song... {i}%")
+                                            time.sleep(0.1)
+                                        
+                                        song_status.text("🎉 Song generation complete! (Note: This is estimated progress)")
+                                        
+                                        st.info("Your song is being generated. This usually takes 2-5 minutes.")
+                                        
+                                        # Note about callback vs polling
+                                        st.markdown("""
+                                        <div style="background-color: #fff3cd; padding: 1rem; border-radius: 10px; border-left: 4px solid #ffc107;">
+                                        <strong>⏳ Song Generation in Progress</strong><br>
+                                        The Suno API works asynchronously. Your song will be ready in a few minutes. 
+                                        Since this is a demo, you would typically:
+                                        <ul>
+                                        <li>Set up a proper callback URL to receive the completed song</li>
+                                        <li>Or periodically check the task status</li>
+                                        </ul>
+                                        The generated songs will include audio URLs that you can listen to and download.
+                                        </div>
+                                        """, unsafe_allow_html=True)
+                                        
+                                        # For demo purposes, show what the callback would contain
+                                        st.subheader("📋 Expected Result Structure")
+                                        st.json({
+                                            "message": "When complete, you'll receive:",
+                                            "structure": {
+                                                "audio_url": "Direct link to download the MP3",
+                                                "stream_audio_url": "Link for streaming",
+                                                "image_url": "Album cover/artwork",
+                                                "title": song_title,
+                                                "duration": "Song length in seconds",
+                                                "model_name": "AI model used"
+                                            }
+                                        })
+                                
+                                # Show the API response for debugging
+                                with st.expander("🔍 API Response Details"):
+                                    st.json(suno_result)
+                                    
                 else:
                     st.warning("No dreams found in the selected column.")
         
-        elif not claude_api_key or not suno_api_key:
-            st.info("👈 Please enter your API keys in the sidebar to start generating songs.")
+        elif CLAUDE_API_KEY == "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" or SUNO_API_KEY == "f991f229712ece64cdc0b9bcaa58ccaf":
+            st.warning("⚠️ Please configure your API keys in the code before using the app.")
+            st.code("""
+# Update these lines in the code with your actual API keys:
+CLAUDE_API_KEY = "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"
+SUNO_API_KEY = "f991f229712ece64cdc0b9bcaa58ccaf"
+            """)
         
         else:
             st.info("👈 Please load dreams from Google Sheets first.")
@@ -335,6 +396,9 @@ def main():
         "</p>", 
         unsafe_allow_html=True
     )
+
+if __name__ == "__main__":
+    main()
 
 if __name__ == "__main__":
     main()

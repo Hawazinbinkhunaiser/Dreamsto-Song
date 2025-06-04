@@ -120,7 +120,7 @@ The lyrics should be completely original and suitable for a 2-minute song. Pleas
         st.error(f"Error calling Claude API: {str(e)}")
         return None
 
-def generate_song_with_suno(lyrics, api_key, title="Singapore River Dreams", genre="pop"):
+def generate_song_with_suno(lyrics, api_key, title="Singapore River Dreams", genre="pop", callback_url=None):
     """Generate song using Suno API"""
     
     # Suno API endpoint from documentation

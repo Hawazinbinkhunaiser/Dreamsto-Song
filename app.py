@@ -41,6 +41,27 @@ st.markdown("""
         border-radius: 10px;
         border-left: 4px solid #28a745;
     }
+    .preview-box {
+        background-color: #e7f3ff;
+        padding: 1.5rem;
+        border-radius: 10px;
+        border-left: 4px solid #007bff;
+        margin: 1rem 0;
+    }
+    .link-button {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        margin: 0.5rem 0;
+    }
+    .link-button:hover {
+        background-color: #0056b3;
+        color: white;
+        text-decoration: none;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -208,6 +229,21 @@ def main():
         help="URL to receive completion notifications. Leave empty for demo mode."
     )
     
+    # Add preview link in sidebar
+    st.sidebar.header("🎧 Song Preview")
+    st.sidebar.markdown("""
+    <div class="preview-box">
+        <strong>🎵 Preview Your Generated Songs</strong><br>
+        After generating a song, you can preview and download it using the Suno API logs:
+        <br><br>
+        <a href="https://sunoapi.org/logs" target="_blank" class="link-button">
+            🔗 Open Suno API Logs
+        </a>
+        <br><br>
+        <small>Use your task ID to find your generated songs in the logs.</small>
+    </div>
+    """, unsafe_allow_html=True)
+    
     # Main content
     col1, col2 = st.columns([1, 1])
     
@@ -284,19 +320,58 @@ def main():
                                 task_id = suno_result['data'].get('task_id')
                                 if task_id:
                                     st.info(f"🎵 Task ID: {task_id}")
-                                    st.info("Your song is being generated. This usually takes 2-5 minutes.")
                                     
-                                    # Note about callback vs polling
+                                    # Enhanced preview section with direct link
                                     st.markdown("""
-                                    <div style="background-color: #fff3cd; padding: 1rem; border-radius: 10px; border-left: 4px solid #ffc107;">
-                                    <strong>⏳ Song Generation in Progress</strong><br>
-                                    The Suno API works asynchronously. Your song will be ready in a few minutes. 
-                                    Since this is a demo, you would typically:
+                                    <div class="preview-box">
+                                        <h4>🎧 Preview Your Song</h4>
+                                        <p>Your song is being generated! Once complete (usually 2-5 minutes), you can preview and download it:</p>
+                                        <a href="https://sunoapi.org/logs" target="_blank" class="link-button">
+                                            🔗 Open Suno API Logs to Preview
+                                        </a>
+                                        <br><br>
+                                        <strong>📋 Your Task ID:</strong> <code>{}</code>
+                                        <br><br>
+                                        <small>💡 <strong>How to find your song:</strong></small>
+                                        <ul>
+                                            <li>Click the link above to open Suno API logs</li>
+                                            <li>Search for your Task ID: <code>{}</code></li>
+                                            <li>Once generation is complete, you'll see audio download links</li>
+                                            <li>Click to listen and download your song!</li>
+                                        </ul>
+                                    </div>
+                                    """.format(task_id, task_id), unsafe_allow_html=True)
+                                    
+                                    # Progress estimation
+                                    st.subheader("⏳ Generation Progress")
+                                    progress_bar = st.progress(0)
+                                    status_text = st.empty()
+                                    
+                                    # Simulate progress (since we can't get real-time status)
+                                    for i in range(0, 101, 5):
+                                        progress_bar.progress(i)
+                                        if i < 30:
+                                            status_text.text(f"🎵 Analyzing lyrics and creating musical arrangement... {i}%")
+                                        elif i < 60:
+                                            status_text.text(f"🎤 Generating vocals and melody... {i}%")
+                                        elif i < 90:
+                                            status_text.text(f"🎚️ Mixing and mastering audio... {i}%")
+                                        else:
+                                            status_text.text(f"✨ Finalizing your song... {i}%")
+                                        time.sleep(0.1)
+                                    
+                                    status_text.text("🎉 Generation process initiated! Check the Suno API logs for completion.")
+                                    
+                                    # Additional information
+                                    st.markdown("""
+                                    <div style="background-color: #fff3cd; padding: 1rem; border-radius: 10px; border-left: 4px solid #ffc107; margin-top: 1rem;">
+                                    <strong>⏳ What happens next?</strong><br>
                                     <ul>
-                                    <li>Set up a proper callback URL to receive the completed song</li>
-                                    <li>Or periodically check the task status</li>
+                                        <li>🎵 Suno AI is now composing your song (2-5 minutes)</li>
+                                        <li>🔗 Use the link above to check progress and download when ready</li>
+                                        <li>📧 If you provided a callback URL, you'll receive a notification</li>
+                                        <li>🎧 Generated songs typically include multiple variations to choose from</li>
                                     </ul>
-                                    The generated songs will include audio URLs that you can listen to and download.
                                     </div>
                                     """, unsafe_allow_html=True)
                                     

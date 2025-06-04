@@ -196,7 +196,7 @@ def main():
     st.markdown("<p style='text-align: center; font-size: 1.2em; color: #666;'>Transform collective dreams about Singapore's river into beautiful songs</p>", unsafe_allow_html=True)
     
     # API Keys (Replace with your actual API keys)
-    CLAUDE_API_KEY = "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"  # Replace with your actual Claude API key
+    CLAUDE_API_KEY = "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"  # Replace with your actual Claude API key (starts with sk-ant-api03-)
     SUNO_API_KEY = "f991f229712ece64cdc0b9bcaa58ccaf"      # Replace with your actual Suno API key
     
     # Sidebar for configuration
@@ -210,7 +210,10 @@ def main():
     # API Status indicator
     st.sidebar.header("🔌 API Status")
     if CLAUDE_API_KEY != "your-claude-api-key-here":
-        st.sidebar.success("✅ Claude API: Ready")
+        if CLAUDE_API_KEY.startswith("sk-ant-api03-"):
+            st.sidebar.success("✅ Claude API: Ready")
+        else:
+            st.sidebar.warning("⚠️ Claude API: Invalid format (should start with sk-ant-api03-)")
     else:
         st.sidebar.error("❌ Claude API: Key not configured")
     

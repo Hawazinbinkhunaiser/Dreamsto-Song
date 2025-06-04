@@ -209,12 +209,12 @@ def main():
     
     # API Status indicator
     st.sidebar.header("🔌 API Status")
-    if CLAUDE_API_KEY != "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":
+    if CLAUDE_API_KEY != "your-claude-api-key-here":
         st.sidebar.success("✅ Claude API: Ready")
     else:
         st.sidebar.error("❌ Claude API: Key not configured")
     
-    if SUNO_API_KEY != "f991f229712ece64cdc0b9bcaa58ccaf":
+    if SUNO_API_KEY != "your-suno-api-key-here":
         st.sidebar.success("✅ Suno API: Ready")
     else:
         st.sidebar.error("❌ Suno API: Key not configured")
@@ -259,7 +259,7 @@ def main():
     with col2:
         st.header("🎼 Song Generation")
         
-        if 'dreams_df' in st.session_state and CLAUDE_API_KEY != "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" and SUNO_API_KEY != "f991f229712ece64cdc0b9bcaa58ccaf":
+        if 'dreams_df' in st.session_state and CLAUDE_API_KEY != "your-claude-api-key-here" and SUNO_API_KEY != "your-suno-api-key-here":
             dream_column = st.selectbox("Select dream column:", st.session_state.dreams_df.columns, key="dream_col_select")
             song_title = st.text_input("Song Title", value="Singapore River Dreams")
             genre = st.selectbox("Music Genre", ["pop", "folk", "indie", "acoustic", "classical", "electronic"])
@@ -396,9 +396,6 @@ SUNO_API_KEY = "f991f229712ece64cdc0b9bcaa58ccaf"
         "</p>", 
         unsafe_allow_html=True
     )
-
-if __name__ == "__main__":
-    main()
 
 if __name__ == "__main__":
     main()

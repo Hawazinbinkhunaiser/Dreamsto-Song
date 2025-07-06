@@ -102,9 +102,9 @@ def generate_simple_lyrics(dreams_list, api_key):
     """Generate simple 2-minute song lyrics using Claude API"""
     
     # Simple prompt as requested
-    dreams_text = "\n".join([f"- {dream}" for dream in dreams_list[:20]])  # Limit to first 20 dreams
+    dreams_text = "\n".join([f"- {dream}" for dream in dreams_list[:50]])  # Limit to first 20 dreams
     
-    prompt = f"""Create 2-minute song lyrics that incorporates all the following dreams:
+    prompt = f"""Create 2-minute song lyrics that incorporates all the following dreams substracting any hate or bad words or dreams:
 
 {dreams_text}
 

@@ -1,6 +1,11 @@
 streamlit
 pandas
 requests
-google-api-python-client==2.126.0
+
 google-auth==2.29.0
 google-auth-oauthlib==1.2.0
+google-api-python-client==2.126.0
+
+# This is the missing package that provides `google.oauth2`
+google-auth-oauthlib
+google-auth-httplib2

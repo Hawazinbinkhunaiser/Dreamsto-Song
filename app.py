@@ -72,7 +72,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Fixed Google Sheets URL
-FIXED_SHEET_URL = "https://docs.google.com/spreadsheets/d/19uPq9pUeJdYPwiUqvI2VvlHSXk_BE3ccrkR6eNY-n50/edit?resourcekey=&gid=1092449549#gid=1092449549"
+FIXED_SHEET_URL = "https://docs.google.com/spreadsheets/d/1CRmG9M841oGGJjT8ks4b-2zR0vrFy0tHCMf_099Zxf0/edit?resourcekey=&gid=322702448#gid=322702448"
 
 def load_dreams_from_fixed_sheet():
     """Load dreams from the fixed Google Sheets URL"""
@@ -102,7 +102,7 @@ def generate_simple_lyrics(dreams_list, api_key):
     """Generate simple 2-minute song lyrics using Claude API"""
     
     # Simple prompt as requested
-    dreams_text = "\n".join([f"- {dream}" for dream in dreams_list[:50]])  # Limit to first 20 dreams
+    dreams_text = "\n".join([f"- {dream}" for dream in dreams_list[:20]])  # Limit to first 20 dreams
     
     prompt = f"""Create 2-minute song lyrics that incorporates all the following dreams substracting any hate or bad words or dreams:
 

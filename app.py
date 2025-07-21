@@ -333,9 +333,9 @@ def main():
                 st.subheader("✍️ Generating Lyrics...")
                 with st.spinner("Claude is creating lyrics from all the dreams..."):
                     lyrics = generate_simple_lyrics(dreams_list, claude_api_key)
-                    doc_url = append_lyrics_to_existing_doc(lyrics)
-                    st.success("✅ Lyrics appended to the Google Doc!")
-                    st.markdown(f'<a href="{doc_url}" target="_blank" class="link-button">📄 View Google Doc</a>', unsafe_allow_html=True)
+                    
+                   
+                   
 
                 
                 if lyrics:

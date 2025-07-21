@@ -5,41 +5,9 @@ import json
 import time
 from io import StringIO
 import base64
-from google.oauth2 import service_account
-from googleapiclient.discovery import build
 
 
-def append_lyrics_to_existing_doc(lyrics):
-    # Use your existing document ID
-    document_id = "1KdWtQ3BjXr0yfRd4e82zpmxOsU9ekMoctH63SfMmL7E"
 
-    # Authenticate using Streamlit secrets
-    creds = service_account.Credentials.from_service_account_info(
-        st.secrets["gcp_service_account"],
-        scopes=["https://www.googleapis.com/auth/documents"]
-    )
-
-    service = build('docs', 'v1', credentials=creds)
-
-    # Get the current document to find the last index
-    doc = service.documents().get(documentId=document_id).execute()
-    end_index = doc['body']['content'][-1]['endIndex'] - 1
-
-    # Prepare the text to insert (you can format it here too)
-    formatted_text = f"\n\n🎼 New Lyrics Entry:\n\n{lyrics.strip()}\n\n{'-'*40}\n"
-
-    requests = [
-        {
-            'insertText': {
-                'location': {'index': end_index},
-                'text': formatted_text
-            }
-        }
-    ]
-
-    service.documents().batchUpdate(documentId=document_id, body={'requests': requests}).execute()
-    
-    return f"https://docs.google.com/document/d/{document_id}/edit"
 
 # Set page config
 st.set_page_config(

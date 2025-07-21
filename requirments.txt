@@ -2,9 +2,8 @@ streamlit
 pandas
 requests
 
-# Google authentication and API client
+# Google API packages
 google-auth==2.29.0
 google-auth-oauthlib==1.2.0
 google-auth-httplib2==0.2.0
 google-api-python-client==2.126.0
-
